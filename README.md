@@ -32,12 +32,14 @@ Aplikacija je razvijena koristeći moderne Android prakse:
 
 ## 🚀 Instalacija
 
-Najlakši način za preuzimanje i instalaciju aplikacije je putem automatski generiranih izdanja na GitHubu:
+Najlakši način za preuzimanje i instalaciju aplikacije je putem trajnog linka:
 
-1. Otvori karticu **[Releases](https://github.com/abrnjic/martina_budilica/releases)** na ovom repozitoriju.
-2. Odaberi najnovije izdanje i preuzmi **`app-debug.apk`** datoteku na svoj Android uređaj.
-3. Otvori preuzetu datoteku. (Ovisno o postavkama tvog uređaja, možda ćeš morati omogućiti instalaciju iz *nepoznatih izvora*).
-4. Pri prvom pokretanju i spremanju alarma, **dopusti** aplikaciji slanje obavijesti, praćenje lokacije i postavljanje točnih alarma kako bi mogla besprijekorno funkcionirati.
+📥 **[Preuzmi aplikaciju (app-debug.apk)](https://github.com/abrnjic/martina_budilica/releases/latest/download/app-debug.apk)**
+
+**Koraci za instalaciju:**
+1. Klikni na gornji link i preuzmi **`app-debug.apk`** datoteku na svoj Android uređaj.
+2. Otvori preuzetu datoteku. (Ovisno o postavkama tvog uređaja, možda ćeš morati omogućiti instalaciju iz *nepoznatih izvora*).
+3. Pri prvom pokretanju i spremanju alarma, **dopusti** aplikaciji slanje obavijesti, praćenje lokacije i postavljanje točnih alarma kako bi mogla besprijekorno funkcionirati.
 
 ## 🛡️ Privatnost i sigurnost
 
