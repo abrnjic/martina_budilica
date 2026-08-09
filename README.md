@@ -15,10 +15,16 @@
 
 ## ✨ Glavne značajke
 
+- **Matematički izazov (Snooze Challenge)** - Umjesto običnog gašenja alarma, Martina mora riješiti kratak matematički zadatak kako bi dokazala da je zaista budna.
+- **Provjera budnosti (Wake-up check)** - 5 minuta nakon gašenja alarma aplikacija šalje obavijest. Ako ju se ignorira, pravi alarm se ponovno aktivira!
+- **Postepeno pojačavanje (Fade-in zvuka)** - Alarm započinje vrlo tiho i postepeno se pojačava kroz nekoliko minuta za prirodnije buđenje.
+- **Odabir vlastite melodije** - Mogućnost odabira bilo koje pjesme ili zvuka s uređaja za alarm.
+- **Odabir dana u tjednu** - Alarm se pametno zakazuje samo za odabrane dane u tjednu (npr. samo radnim danima).
+- **Podsjetnik za spavanje** - Aplikacija šalje podsjetnik točno 8 sati prije postavljenog alarma, upozoravajući da je vrijeme za pripremu za krevet.
+- **Nasumični dnevni citati** - Svakog jutra na zaslonu se ispisuje drugačija motivacijska poruka ili šala.
 - **Humoristični alarmni zaslon** - Svakih 30 sekundi aplikacija prikazuje novu šaljivu poruku preko cijelog zaslona (čak i kada je mobitel zaključan) sve dok se alarm ne isključi.
 - **Jutarnja prognoza** - Odmah nakon gašenja alarma, aplikacija putem besplatnog [Open-Meteo API-ja](https://open-meteo.com/) dohvaća trenutačnu temperaturu i vremenske uvjete na temelju GPS lokacije te ispisuje prigodan savjet.
 - **Osobni podsjetnik** - Mogućnost unosa prilagođenog podsjetnika (npr. "Danas imaš važan sastanak!") koji se prikazuje na zaslonu dobrodošlice.
-- **Probni alarm** - Mogućnost testiranja funkcionalnosti alarma za 10 sekundi kako bi se osiguralo da su sva dopuštenja ispravno dodijeljena.
 - **Otpornost na ponovno pokretanje** - Aplikacija automatski iznova postavlja alarme nakon ponovnog pokretanja (reboota) uređaja.
 
 ## 🛠️ Tehnologije
