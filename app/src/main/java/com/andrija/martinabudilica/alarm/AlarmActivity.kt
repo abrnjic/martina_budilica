@@ -10,6 +10,8 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -46,6 +48,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -70,7 +76,10 @@ class AlarmActivity : ComponentActivity() {
             MartinaTheme {
                 AlarmExperience(
                     onAwake = { stopAlarmSound() },
-                    onFinish = { finishAndRemoveTask() }
+                    onFinish = {
+                        AlarmScheduler.scheduleWakeUpCheck(this@AlarmActivity, 5)
+                        finishAndRemoveTask()
+                    }
                 )
             }
         }
@@ -87,9 +96,14 @@ class AlarmActivity : ComponentActivity() {
         )
     }
 
+    private var fadeJob: kotlinx.coroutines.Job? = null
+
     private fun startAlarmSound() {
-        val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val prefs = com.andrija.martinabudilica.data.AlarmPreferences(this).load()
+        val uriStr = prefs.ringtoneUri
+        val uri = if (uriStr != null) android.net.Uri.parse(uriStr) else (RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+
         player = MediaPlayer().apply {
             setAudioAttributes(
                 AudioAttributes.Builder()
@@ -99,12 +113,23 @@ class AlarmActivity : ComponentActivity() {
             )
             setDataSource(this@AlarmActivity, uri)
             isLooping = true
+            setVolume(0.05f, 0.05f)
             prepare()
             start()
+        }
+
+        fadeJob = lifecycleScope.launch {
+            var vol = 0.05f
+            while (vol < 1.0f) {
+                delay(2000)
+                vol += 0.05f
+                player?.setVolume(vol, vol)
+            }
         }
     }
 
     private fun stopAlarmSound() {
+        fadeJob?.cancel()
         player?.runCatching {
             if (isPlaying) stop()
             release()
@@ -137,6 +162,12 @@ private fun AlarmExperience(onAwake: () -> Unit, onFinish: () -> Unit) {
     var awake by remember { mutableStateOf(false) }
     var loading by remember { mutableStateOf(false) }
     var morningInfo by remember { mutableStateOf<MorningInfo?>(null) }
+    
+    var showMathChallenge by remember { mutableStateOf(false) }
+    var mathAnswer by remember { mutableStateOf("") }
+    val num1 by remember { mutableIntStateOf((10..50).random()) }
+    val num2 by remember { mutableIntStateOf((10..50).random()) }
+    var mathError by remember { mutableStateOf(false) }
 
     BackHandler(enabled = !awake) { }
 
@@ -197,16 +228,53 @@ private fun AlarmExperience(onAwake: () -> Unit, onFinish: () -> Unit) {
                     color = Color.White.copy(alpha = 0.65f)
                 )
                 Spacer(Modifier.height(42.dp))
-                Button(
-                    modifier = Modifier.fillMaxWidth().height(64.dp),
-                    onClick = {
-                        awake = true
-                        loading = true
-                        onAwake()
+                if (showMathChallenge) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("Dokaži da si budna!", fontWeight = FontWeight.Bold, color = Color.Black)
+                            Spacer(Modifier.height(8.dp))
+                            Text("$num1 + $num2 = ?", fontSize = 28.sp, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.primary)
+                            Spacer(Modifier.height(16.dp))
+                            OutlinedTextField(
+                                value = mathAnswer,
+                                onValueChange = { mathAnswer = it; mathError = false },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                                isError = mathError,
+                                singleLine = true,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            Spacer(Modifier.height(16.dp))
+                            Button(
+                                modifier = Modifier.fillMaxWidth().height(54.dp),
+                                onClick = {
+                                    if (mathAnswer.trim() == (num1 + num2).toString()) {
+                                        awake = true
+                                        loading = true
+                                        onAwake()
+                                    } else {
+                                        mathError = true
+                                    }
+                                }
+                            ) { Text("Ugasi alarm") }
+                        }
                     }
-                ) {
-                    Icon(Icons.Rounded.CheckCircle, null, modifier = Modifier.size(28.dp))
-                    Text("  BUDNA SAM!", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                } else {
+                    Button(
+                        modifier = Modifier.fillMaxWidth().height(64.dp),
+                        onClick = {
+                            showMathChallenge = true
+                        }
+                    ) {
+                        Icon(Icons.Rounded.CheckCircle, null, modifier = Modifier.size(28.dp))
+                        Text("  BUDNA SAM!", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
         } else {
@@ -228,6 +296,17 @@ private fun MorningGreeting(
     onFinish: () -> Unit
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        val quotes = remember {
+            listOf(
+                "Danas je tvoj dan, osvoji ga! 🌟",
+                "Smij se, kava te već čeka. ☕",
+                "Svijet je bolji kad ti otvoriš oči. 💜",
+                "Neka ti današnji dan bude predivan. ✨",
+                "Sve što zamisliš danas možeš ostvariti! 🚀"
+            )
+        }
+        val dailyQuote = remember { quotes.random() }
+
         Text("☀️", fontSize = 68.sp)
         Text(
             "Bravo, Martina!",
@@ -236,7 +315,7 @@ private fun MorningGreeting(
             color = MaterialTheme.colorScheme.primary
         )
         Text(
-            "Dobro jutro, ljepotice. Dan je upravo postao bolji jer si otvorila oči. 💜",
+            dailyQuote,
             textAlign = TextAlign.Center,
             fontSize = 18.sp,
             lineHeight = 25.sp,

@@ -63,6 +63,7 @@ import com.andrija.martinabudilica.data.AlarmPreferences
 import com.andrija.martinabudilica.data.AlarmSettings
 import com.andrija.martinabudilica.ui.theme.MartinaTheme
 import java.util.Locale
+import androidx.compose.foundation.clickable
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,10 +82,22 @@ private fun AlarmSetupScreen() {
     var minute by remember { mutableIntStateOf(initial.minute) }
     var reminder by remember { mutableStateOf(initial.reminder) }
     var enabled by remember { mutableStateOf(initial.enabled) }
+    var ringtoneUri by remember { mutableStateOf(initial.ringtoneUri) }
+    var daysOfWeek by remember { mutableStateOf(initial.daysOfWeek) }
+    var bedtimeReminderEnabled by remember { mutableStateOf(initial.bedtimeReminderEnabled) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { }
+
+    val ringtoneLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            val uri = result.data?.getParcelableExtra<Uri>(android.media.RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+            ringtoneUri = uri?.toString()
+        }
+    }
 
     fun requestPermissions() {
         val permissions = mutableListOf(
@@ -171,6 +184,49 @@ private fun AlarmSetupScreen() {
                         modifier = Modifier.fillMaxWidth()
                     )
 
+                    Spacer(Modifier.height(18.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        val days = listOf(
+                            2 to "Pon", 3 to "Uto", 4 to "Sri", 5 to "Čet", 6 to "Pet", 7 to "Sub", 1 to "Ned"
+                        )
+                        days.forEach { (calendarDay, label) ->
+                            val isSelected = daysOfWeek.contains(calendarDay)
+                            Box(
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .background(
+                                        if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray,
+                                        RoundedCornerShape(8.dp)
+                                    )
+                                    .clickable {
+                                        daysOfWeek = if (isSelected) {
+                                            daysOfWeek - calendarDay
+                                        } else {
+                                            daysOfWeek + calendarDay
+                                        }
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(label, color = if (isSelected) Color.White else Color.Black, fontSize = 12.sp)
+                            }
+                        }
+                    }
+
+                    Spacer(Modifier.height(16.dp))
+                    OutlinedButton(onClick = {
+                        val intent = Intent(android.media.RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                            putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_TYPE, android.media.RingtoneManager.TYPE_ALARM)
+                            putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
+                            putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
+                        }
+                        ringtoneLauncher.launch(intent)
+                    }, modifier = Modifier.fillMaxWidth()) {
+                        Text(if (ringtoneUri != null) "Melodija odabrana" else "Odaberi melodiju")
+                    }
+
                     Spacer(Modifier.height(16.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -178,7 +234,20 @@ private fun AlarmSetupScreen() {
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column {
-                            Text("Alarm svaki dan", fontWeight = FontWeight.Bold)
+                            Text("Podsjetnik za spavanje", fontWeight = FontWeight.Bold)
+                            Text("8h prije alarma", fontSize = 13.sp)
+                        }
+                        Switch(checked = bedtimeReminderEnabled, onCheckedChange = { bedtimeReminderEnabled = it })
+                    }
+
+                    Spacer(Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column {
+                            Text("Aktiviraj alarm", fontWeight = FontWeight.Bold)
                             Text(if (enabled) "Spreman je za akciju" else "Trenutačno odmara", fontSize = 13.sp)
                         }
                         Switch(checked = enabled, onCheckedChange = { enabled = it })
@@ -191,7 +260,7 @@ private fun AlarmSetupScreen() {
                 modifier = Modifier.fillMaxWidth().height(54.dp),
                 onClick = {
                     requestPermissions()
-                    val settings = AlarmSettings(hour, minute, reminder.trim(), enabled)
+                    val settings = AlarmSettings(hour, minute, reminder.trim(), enabled, ringtoneUri, daysOfWeek, bedtimeReminderEnabled)
                     preferences.save(settings)
                     if (enabled && ensureExactAlarmPermission()) {
                         if (AlarmScheduler.schedule(context, settings)) {
@@ -212,7 +281,7 @@ private fun AlarmSetupScreen() {
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     requestPermissions()
-                    val settings = AlarmSettings(hour, minute, reminder.trim(), true)
+                    val settings = AlarmSettings(hour, minute, reminder.trim(), true, ringtoneUri, daysOfWeek, bedtimeReminderEnabled)
                     preferences.save(settings)
                     enabled = true
                     if (ensureExactAlarmPermission() && AlarmScheduler.scheduleTest(context)) {
