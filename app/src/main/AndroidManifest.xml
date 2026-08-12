@@ -26,6 +26,8 @@
             android:showWhenLocked="true"
             android:turnScreenOn="true" />
 
+        <activity android:name=".NotebookActivity" android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

@@ -293,6 +293,17 @@ private fun AlarmSetupScreen() {
                 Text("  Isprobaj za 10 sekundi")
             }
 
+            Spacer(Modifier.height(10.dp))
+            OutlinedButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    context.startActivity(Intent(context, NotebookActivity::class.java))
+                }
+            ) {
+                Icon(androidx.compose.material.icons.rounded.Book, null)
+                Text("  Otvori Martinin Dnevnik")
+            }
+
             Spacer(Modifier.height(18.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Rounded.LocationOn, null, tint = MaterialTheme.colorScheme.secondary)

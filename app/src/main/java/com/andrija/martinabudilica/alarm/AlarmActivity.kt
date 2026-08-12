@@ -361,6 +361,20 @@ private fun MorningGreeting(
         }
 
         Spacer(Modifier.height(22.dp))
+        androidx.compose.material3.OutlinedButton(
+            modifier = Modifier.fillMaxWidth().height(54.dp),
+            onClick = {
+                val intent = android.content.Intent(androidx.compose.ui.platform.LocalContext.current, com.andrija.martinabudilica.NotebookActivity::class.java).apply {
+                    putExtra("NEW_NOTE", true)
+                }
+                androidx.compose.ui.platform.LocalContext.current.startActivity(intent)
+            }
+        ) {
+            Icon(androidx.compose.material.icons.rounded.Book, null)
+            Text("  Zapiši svoj san/misao ✍️", fontWeight = FontWeight.Bold)
+        }
+
+        Spacer(Modifier.height(12.dp))
         Button(modifier = Modifier.fillMaxWidth().height(54.dp), onClick = onFinish) {
             Text("Kreni u dan 🚀", fontWeight = FontWeight.Bold)
         }

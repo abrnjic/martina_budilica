@@ -21,6 +21,7 @@
 - **Odabir vlastite melodije** - Mogućnost odabira bilo koje pjesme ili zvuka s uređaja za alarm.
 - **Odabir dana u tjednu** - Alarm se pametno zakazuje samo za odabrane dane u tjednu (npr. samo radnim danima).
 - **Podsjetnik za spavanje** - Aplikacija šalje podsjetnik točno 8 sati prije postavljenog alarma, upozoravajući da je vrijeme za pripremu za krevet.
+- **Martinin Dnevnik (Notebook)** - Ugrađena bilježnica u kojoj Martina može zabilježiti svoje snove, jutarnje misli i dnevne zadatke odmah nakon buđenja (ili bilo kada tijekom dana).
 - **Nasumični dnevni citati** - Svakog jutra na zaslonu se ispisuje drugačija motivacijska poruka ili šala.
 - **Humoristični alarmni zaslon** - Svakih 30 sekundi aplikacija prikazuje novu šaljivu poruku preko cijelog zaslona (čak i kada je mobitel zaključan) sve dok se alarm ne isključi.
 - **Jutarnja prognoza** - Odmah nakon gašenja alarma, aplikacija putem besplatnog [Open-Meteo API-ja](https://open-meteo.com/) dohvaća trenutačnu temperaturu i vremenske uvjete na temelju GPS lokacije te ispisuje prigodan savjet.
