@@ -295,6 +295,7 @@ private fun MorningGreeting(
     loading: Boolean,
     onFinish: () -> Unit
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         val quotes = remember {
             listOf(
@@ -364,10 +365,10 @@ private fun MorningGreeting(
         androidx.compose.material3.OutlinedButton(
             modifier = Modifier.fillMaxWidth().height(54.dp),
             onClick = {
-                val intent = android.content.Intent(androidx.compose.ui.platform.LocalContext.current, com.andrija.martinabudilica.NotebookActivity::class.java).apply {
+                val intent = android.content.Intent(context, com.andrija.martinabudilica.NotebookActivity::class.java).apply {
                     putExtra("NEW_NOTE", true)
                 }
-                androidx.compose.ui.platform.LocalContext.current.startActivity(intent)
+                context.startActivity(intent)
             }
         ) {
             Icon(androidx.compose.material.icons.rounded.Book, null)
