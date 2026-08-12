@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Book
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.Notifications
@@ -371,7 +372,7 @@ private fun MorningGreeting(
                 context.startActivity(intent)
             }
         ) {
-            Icon(androidx.compose.material.icons.rounded.Book, null)
+            Icon(Icons.Rounded.Book, null)
             Text("  Zapiši svoj san/misao ✍️", fontWeight = FontWeight.Bold)
         }
 

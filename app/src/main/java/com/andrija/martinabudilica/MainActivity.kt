@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Alarm
+import androidx.compose.material.icons.rounded.Book
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.NotificationsActive
@@ -300,7 +301,7 @@ private fun AlarmSetupScreen() {
                     context.startActivity(Intent(context, NotebookActivity::class.java))
                 }
             ) {
-                Icon(androidx.compose.material.icons.rounded.Book, null)
+                Icon(Icons.Rounded.Book, null)
                 Text("  Otvori Martinin Dnevnik")
             }
 
